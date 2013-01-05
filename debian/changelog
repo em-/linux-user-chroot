@@ -1,0 +1,5 @@
+linux-user-chroot (2012.2-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #697438)
+
+ -- Thomas Bechtold <thomasbechtold@jpberlin.de>  Sat, 05 Jan 2013 12:44:33 +0100

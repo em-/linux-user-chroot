@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@ --with autotools-dev
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod g+s debian/linux-user-chroot/usr/bin/linux-user-chroot
