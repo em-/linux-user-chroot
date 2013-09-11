@@ -1,5 +1,11 @@
-linux-user-chroot (2012.2-1) UNRELEASED; urgency=low
+linux-user-chroot (2013.1-1) unstable; urgency=low
 
+  [ Thomas Bechtold ]
   * Initial release (Closes: #697438)
 
- -- Thomas Bechtold <thomasbechtold@jpberlin.de>  Sat, 05 Jan 2013 12:44:33 +0100
+  [ Emanuele Aina ]
+  * New upstream version.
+  * Add myself as uploader.
+  * Add the linux-user-chroot-dbg package for the debug symbols.
+
+ -- Emanuele Aina <emanuele.aina@collabora.com>  Thu, 12 Sep 2013 14:52:03 +0200
