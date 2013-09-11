@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/prctl.h>
+#include <sys/fsuid.h>
 #include <sys/mount.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
@@ -108,6 +109,28 @@ reverse_mount_list (MountSpec *mount)
     }
 
   return prev;
+}
+
+/**
+ * fsuid_chdir:
+ * @uid: User id we should use
+ * @path: Path string
+ *
+ * Like chdir() except we use the filesystem privileges of @uid.
+ */
+static int
+fsuid_chdir (uid_t       uid,
+             const char *path)
+{
+  int errsv;
+  int ret;
+  /* Note we don't check errors here because we can't, basically */
+  (void) setfsuid (uid);
+  ret = chdir (path);
+  errsv = errno;
+  (void) setfsuid (0);
+  errno = errsv;
+  return ret;
 }
 
 int
@@ -330,7 +353,9 @@ main (int      argc,
             }
           else if (bind_mount_iter->type == MOUNT_SPEC_BIND)
             {
-              if (mount (bind_mount_iter->source, dest,
+              if (fsuid_chdir (ruid, bind_mount_iter->source) < 0)
+                fatal ("Couldn't chdir to bind mount source");
+              if (mount (".", dest,
                          NULL, MS_BIND | MS_PRIVATE, NULL) < 0)
                 fatal_errno ("mount (MS_BIND)");
             }
@@ -344,19 +369,32 @@ main (int      argc,
             assert (0);
           free (dest);
         }
-      
-      /* Actually perform the chroot. */
-      if (chroot (chroot_dir) < 0)
-        fatal_errno ("chroot");
-      if (chdir (chdir_target) < 0)
+
+      if (fsuid_chdir (ruid, chroot_dir) < 0)
         fatal_errno ("chdir");
 
+      if (mount (".", ".", NULL, MS_BIND | MS_PRIVATE, NULL) < 0)
+        fatal_errno ("mount (MS_BIND)");
+
+      /* Only move if we're not actually just using / */
+      if (strcmp (chroot_dir, "/") != 0)
+        {
+          if (mount (chroot_dir, "/", NULL, MS_MOVE, NULL) < 0)
+            fatal_errno ("mount (MS_MOVE)");
+
+          if (chroot (".") < 0)
+            fatal_errno ("chroot");
+        }
+      
       /* Switch back to the uid of our invoking process.  These calls are
        * irrevocable - see setuid(2) */
       if (setgid (rgid) < 0)
         fatal_errno ("setgid");
       if (setuid (ruid) < 0)
         fatal_errno ("setuid");
+
+      if (chdir (chdir_target) < 0)
+        fatal_errno ("chdir");
 
       if (execvp (program, program_argv) < 0)
         fatal_errno ("execv");
