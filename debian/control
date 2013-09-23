@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Utopia Maintenance Team <pkg-utopia-maintainers@lists.alioth.debian.org>
 Uploaders: Thomas Bechtold <thomasbechtold@jpberlin.de>, Emanuele Aina <emanuele.aina@collabora.com>
-Build-Depends: debhelper (>= 9), autotools-dev
+Build-Depends: debhelper (>= 9), dh-autoreconf, autotools-dev
 Standards-Version: 3.9.4
 Homepage: https://git.gnome.org/browse/linux-user-chroot/
 Vcs-Git: git://anonscm.debian.org/collab-maint/linux-user-chroot.git
