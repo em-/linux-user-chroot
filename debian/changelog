@@ -1,11 +1,14 @@
 linux-user-chroot (2013.1-1) unstable; urgency=low
 
   [ Thomas Bechtold ]
-  * Initial release (Closes: #697438)
+  * Initial release (closes: #697438).
 
   [ Emanuele Aina ]
   * New upstream version.
-  * Add myself as uploader.
   * Add the linux-user-chroot-dbg package for the debug symbols.
 
- -- Emanuele Aina <emanuele.aina@collabora.com>  Thu, 12 Sep 2013 14:52:03 +0200
+  [ Laszlo Boszormenyi (GCS) ]
+  * Correct packaging and debian/copyright .
+  * Add .PHONY to debian/rules .
+
+ -- Laszlo Boszormenyi (GCS) <gcs@debian.org>  Thu, 12 Sep 2013 23:36:46 +0200
